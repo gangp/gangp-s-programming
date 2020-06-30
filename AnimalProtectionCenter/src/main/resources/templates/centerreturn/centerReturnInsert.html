@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="@{layout/default2}">
+
+<th:block layout:fragment="customTitle">
+	<title>유실동물 센터 반환 등록</title>
+</th:block>
+<th:block layout:fragment="customCss">
+<!-- Bootstrap Select Css -->
+   	<link href="/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
+</th:block>	
+
+<th:block layout:fragment="customContents">
+	<section class="content">
+		<div class="col-lg-12">
+			<div class="card">
+	            <div class="header">
+	                <h2>유실동물 센터 반환 등록</h2>
+	            </div>
+	            <div class="body">
+	            	<div class="row clearfix">
+	            		<form action="/centerreturn/centerReturnInsert" method="post">
+	            		<!-- 직원 세션 아이디, 코드 -->
+	            		<input type="hidden" name="staffCode" value="staff_code_2">
+	            			<div class="col-md-4">
+	            				<b>동물 축종</b>
+			                    <div class="input-group colorpicker colorpicker-element">
+		            				<select name="animalType">
+		            					<option value="">====== 선택 ======</option>
+		            					<option value="강아지">강아지</option>
+		            					<option value="고양이">고양이</option>
+		            					<option value="기타">기타</option>
+		            				</select>
+		            			</div>
+	            			</div>
+			                <div class="col-md-4">
+			                    <b>반환인 이름</b>
+			                    <div class="input-group colorpicker colorpicker-element">
+			                        <div class="form-line">
+			                            <input type="text" name="centerReturnName" class="form-control">
+			                        </div>
+			                    </div>
+			                </div>
+			                <div class="col-md-4">
+			                    <b>반환인 나이</b>
+			                    <div class="input-group colorpicker colorpicker-element">
+			                        <div class="form-line">
+			                            <input type="text" name="centerReturnAge" class="form-control">
+			                        </div>
+			                    </div>
+			                </div>
+			                <div class="col-md-4">
+			                    <b>반환인 주소</b>
+			                    <div class="input-group colorpicker colorpicker-element">
+			                        <div class="form-line">
+			                            <input type="text" name="centerReturnAddress" class="form-control">
+			                        </div>
+			                    </div>
+			                </div>
+			                <div class="col-md-4">
+			                    <b>반환인 연락처</b>
+			                    <div class="input-group colorpicker colorpicker-element">
+			                        <div class="form-line">
+			                            <input type="text" name="centerReturnPhone" class="form-control">
+			                        </div>
+			                    </div>
+			                </div>
+	            			<div class="col-md-4 col-md-offset-1 p-t-10">
+			                	<button type="submit" class="btn btn-primary btn-lg">센터 반환 등록</button>
+			                </div>
+	            		</form>
+		            </div>
+	            </div>
+	        </div>
+		</div>
+	</section>
+</th:block>
+
+<th:block layout:fragment="customHeadScript">
+</th:block> 
+<th:block layout:fragment="customFooterScript">
+</th:block>
+ 
+</html>

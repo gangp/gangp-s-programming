@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="@{layout/default2}">
+	
+<th:block layout:fragment="customTitle">
+ 	<title>동물 종류 추가</title>
+</th:block> 
+<th:block layout:fragment="customCss">
+    <!-- Bootstrap Select Css -->
+    <link href="../../plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
+</th:block>
+<th:block layout:fragment="customContents">
+	<section class="content">
+		<div class="col-lg-12">
+			<div class="card">
+	            <div class="header">
+	                <h2>동물 종류 등록</h2>
+	            </div>
+           		<form action="/animaltype/animaltypeinsert" method="post">
+		            <div class="body">
+		            	<div class="row clearfix">
+	            			<div class="col-md-2 col-md-offset-1">
+	            				<b>동물 축종</b>
+			                    <div class="input-group colorpicker colorpicker-element">
+		            				<select name="animalType">
+		            					<option value="">====== 선택 ======</option>
+		            					<option value="강아지">강아지</option>
+		            					<option value="고양이">고양이</option>
+		            					<option value="기타">기타</option>
+		            				</select>
+		            			</div>
+	            			</div>
+			                <div class="col-md-4">
+			                    <b>동물 품종</b>
+			                    <div class="input-group colorpicker colorpicker-element">
+			                        <div class="form-line">
+			                            <input type="text" name="animalTypeSub" class="form-control">
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+		            </div>
+		            <div class="body">
+		           		<button type="submit" class="btn bg-amber btn-block btn-lg waves-effect">동물 종류 등록</button>
+		           	</div>
+           		</form>
+            </div>
+        </div>
+	</section>
+</th:block> 
+ 
+<th:block layout:fragment="customHeadScript">
+</th:block> 
+<th:block layout:fragment="customFooterScript">
+</th:block>
+ 
+</html>

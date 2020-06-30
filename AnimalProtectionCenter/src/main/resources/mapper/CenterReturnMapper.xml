@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cafe24.memory.mapper.CenterReturnMapper">
+
+	<resultMap type="CenterReturn" id="centerReturn">
+		<result property="centerReturnCode" column="center_return_code"></result>
+		<result property="centerReturnName" column="center_return_name"></result>
+		<result property="centerReturnAge" column="center_return_age"></result>
+		<result property="centerReturnAddress" column="center_return_address"></result>
+		<result property="centerReturnPhone" column="center_return_phone"></result>
+		<result property="centerReturnDate" column="center_return_date"></result>
+		<result property="animalType" column="animal_type"></result>
+		
+		<association property="staff" javaType="Staff">
+			<result property="staffCode" column="staff_code"></result>
+			<result property="staffName" column="staff_name"></result>
+		</association>
+		
+	</resultMap>
+	
+	<!-- 리스트 -->
+	<select id="selectCenterReturn" 
+	resultMap="centerReturn">
+	
+		SELECT 
+			center_return_code, 
+			animal_type, 
+			t.staff_name, 
+			center_return_date, 
+			center_return_name, 
+			center_return_age, 
+			center_return_address, 
+			center_return_phone
+		FROM 
+			tb_center_return AS c
+		INNER JOIN
+			tb_staff AS t
+		ON
+			c.staff_code=t.staff_code;	
+	
+	</select>
+	
+	<!-- 코드로 찾기 -->
+	<select id="selectCenterReturnCode" parameterType="String" resultMap="centerReturn">
+		SELECT 
+			center_return_code, 
+			animal_type, 
+			staff_code, 
+			center_return_date, 
+			center_return_name, 
+			center_return_age, 
+			center_return_address, 
+			center_return_phone
+		FROM 
+			tb_center_return
+		WHERE
+			center_return_code=#{centerReturnCode};	
+	
+	</select>
+	
+	<!-- 등록 -->
+	<insert	id="insertCenterReturn" parameterType="centerReturn">
+ 		
+		<selectKey resultType="String" order="BEFORE" keyProperty="centerReturnCode">
+			SELECT 
+				CONCAT('CAC_', MAX(CAST(SUBSTRING(center_return_code,5) AS DECIMAL)+1)) AS center_return_code
+		FROM tb_center_return;
+		</selectKey>
+			INSERT INTO tb_center_return
+			(center_return_code, animal_type, staff_code, center_return_date, center_return_name, center_return_age, center_return_address, center_return_phone)
+			VALUES (
+				#{centerReturnCode},
+				#{animalType},
+				#{staff.staffCode},
+				NOW(), 
+				#{centerReturnName}, 
+				#{centerReturnAge}, 
+				#{centerReturnAddress}, 
+				#{centerReturnPhone}
+				);
+	</insert>
+	
+	<!-- 수정 -->
+	
+	<update id="updateCenterReturn" parameterType="CenterReturn">
+		
+			UPDATE tb_center_return
+			SET
+				animal_type=#{animalType},
+				center_return_name=#{centerReturnName},
+				center_return_age=#{centerReturnAge},
+				center_return_address=#{centerReturnAddress},
+				center_return_phone=#{centerReturnPhone}
+			WHERE 
+				center_return_code=#{centerReturnCode};
+	
+	</update>
+	
+	<!-- 삭제 -->
+	<delete id="deleteCenterReturn" parameterType="String">
+		DELETE 
+		FROM 
+			tb_center_return 
+		WHERE 
+			center_return_code=#{centerReturnCode};
+	</delete>
+</mapper>	

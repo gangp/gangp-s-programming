@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafe24.memory.mapper.AnimalCenterMapper">
+	<resultMap type="AnimalCenter" id="animalCenter">
+		<result property="animalInsertCode" column="animal_insert_code"></result>
+		<result property="animalCenterNumber" column="animal_center_number"></result>
+		<result property="animalPicture" column="animal_picture"></result>
+		<result property="animalGender" column="animal_gender"></result>
+		<result property="animalAge" column="animal_age"></result>
+		<result property="animalWeight" column="animal_weight"></result>
+		<result property="animalCharacter" column="animal_character"></result>
+		<result property="animalState" column="animal_state"></result>
+		<result property="animalInsertRegDate" column="animal_insert_reg_date"></result>
+		
+		<association property="reportManger" javaType="ReportManger">
+			<result property="acceptCode" column="accept_code"></result>
+			<result property="reportCode" column="report_code"></result>
+			<result property="acceptState" column="accept_state"></result>
+			<result property="acceptInDate" column="accept_in_date"></result>
+			<result property="acceptOutDate" column="accept_out_date"></result>
+		</association>
+		<association property="staff" javaType="Staff">
+			<result property="staffCode" column="staff_code"></result>
+			<result property="staffName" column="staff_name"></result>
+		</association>
+		<association property="animalType" javaType="AnimalType">
+			<result property="animalTypeCode" column="animal_type_code"></result>
+			<result property="animalType" column="animal_type"></result>
+			<result property="animalTypeSub" column="animal_type_sub"></result>
+		</association>
+		
+	</resultMap>
+	
+	<select id="selectNoDisposal" resultMap="animalCenter">
+		SELECT
+			*
+		FROM
+			tb_animal_insert AS i
+			left JOIN 
+			tb_animal_disposal AS d ON i.animal_insert_code = d.animal_insert_code
+		WHERE d.animal_disposal_code IS null
+	</select>
+	
+	<select id="selectNumCode" parameterType="int" resultMap="animalCenter">
+		SELECT
+		*
+		FROM
+		tb_animal_insert
+		WHERE
+			animal_center_number = #{Animalnum}
+	</select>
+	
+	<delete id="deleteAnimalCenter" parameterType="String">
+		DELETE FROM tb_animal_insert WHERE animal_insert_code=#{send_code}
+	</delete>
+	
+	<update id="updateAnimalCenter" parameterType="AnimalCenter">
+		UPDATE tb_animal_insert
+		SET
+			animal_center_number=#{animalCenterNumber},
+			animal_picture=#{animalPicture},
+			animal_gender=#{animalGender},
+			animal_age=#{animalAge},
+			animal_weight=#{animalWeight},
+			animal_character=#{animalCharacter},
+			animal_state=#{animalState},
+			animal_type_code=#{animalType.animalTypeCode},
+			accept_code=#{reportManger.acceptCode}
+		WHERE animal_insert_code=#{animalInsertCode}
+	</update>
+	
+	<insert id="insertAnimalCenter" parameterType="AnimalCenter">
+		<selectKey order="BEFORE" keyProperty="animalInsertCode" resultType="String">
+			SELECT
+				(case COUNT(*)
+				when 0 then'animal_insert_1'
+				else CONCAT('animal_insert_',MAX(CAST(SUBSTRING(animal_insert_code,15) AS DECIMAL))+1) 
+				END)AS animal_insert_code
+			FROM
+				tb_animal_insert
+		</selectKey>
+		INSERT INTO tb_animal_insert
+			(animal_insert_code
+			, animal_center_number
+			, animal_picture
+			, animal_gender
+			, animal_age
+			, animal_weight
+			, animal_character
+			, animal_state
+			, animal_insert_reg_date
+			, animal_type_code
+			, staff_code
+			, accept_code)
+		VALUES (#{animalInsertCode}
+				, #{animalCenterNumber}
+				, #{animalPicture}
+				, #{animalGender}
+				, #{animalAge}
+				, #{animalWeight}
+				, #{animalCharacter}
+				, #{animalState}
+				, NOW()
+				, #{animalType.animalTypeCode}
+				, #{staff.staffCode}
+				, #{reportManger.acceptCode})
+	</insert>
+	
+	<select id="selectProtectAnimalCenter" resultType="String">
+		SELECT
+			p.protect_space_code AS 'spaceCode'
+			
+		FROM 
+			tb_animal_insert AS i
+			JOIN tb_animal_type AS t ON i.animal_type_code = t.animal_type_code
+			LEFT JOIN tb_protect_space AS p ON i.animal_insert_code = p.animal_insert_code
+		<if test="send_type !=null and send_type !=''.toString()">
+			<where>
+			t.animal_type = #{send_type}
+			</where>
+		</if>
+		ORDER BY i.animal_insert_reg_date DESC
+	</select>
+	
+	<select id="selectDisposalAnimalCenter" resultType="String">
+		SELECT
+			d.animal_disposal_result AS disposal
+		FROM 
+			tb_animal_insert AS i 
+			left JOIN tb_animal_disposal AS d ON d.animal_insert_code =i.animal_insert_code
+			LEFT JOIN tb_animal_type AS t ON i.animal_type_code = t.animal_type_code
+		<if test="send_type !=null and send_type !=''.toString()">
+			<where>
+			t.animal_type = #{send_type}
+			</where>
+		</if>
+		ORDER BY i.animal_insert_reg_date DESC
+	</select>
+	
+	<select id="selectCenterCnt" resultType="map">
+		SELECT 
+			animal_type AS animalType,
+			COUNT(*) AS cnt
+		FROM
+			tb_animal_insert AS i
+			join
+			tb_animal_type AS t
+			ON i.animal_type_code = t.animal_type_code
+		GROUP BY animal_type;
+	</select>
+	
+	<select id="selectAnimalCenter" resultMap="animalCenter">
+		SELECT 
+			*
+		FROM 
+			tb_animal_insert AS i
+		JOIN tb_animal_type AS t on i.animal_type_code = t.animal_type_code
+		JOIN tb_staff AS s ON i.staff_code = s.staff_code
+		<if test="send_type !=null and send_type !=''.toString()">
+			<where>
+				animal_type= #{send_type}
+			</where>
+		</if>
+		ORDER BY i.animal_insert_reg_date DESC;
+	</select>
+	
+	<select id="selectCenterAnimal" resultMap="animalCenter" parameterType="String">
+		SELECT
+			*
+		FROM 
+			tb_animal_insert AS a
+			left JOIN tb_animal_type AS t ON a.animal_type_code = t.animal_type_code 
+			left JOIN tb_staff AS s ON a.staff_code = s.staff_code
+			left JOIN tb_report_manager AS r ON a.accept_code = r.accept_code
+		WHERE 
+			animal_insert_code = #{animal_insert_code};
+	</select>
+		
+	
+	
+	<!-- 신고 관련 부분  -->
+	<!-- SearchReportAnimal result -->
+	<resultMap type="SearchReportAnimal" id="SearchReportAnimal">
+		<result property="searchReportCode" column="search_report_code"></result>
+		<result property="animalDetail" column="animal_detail"></result>
+		<result property="animalLocation" column="animal_location"></result>
+		<result property="animalPicture" column="animal_picture"></result>
+		<association property="animalType" javaType="AnimalType">
+			<result property="animalTypeCode" column="animal_type_code"></result>
+			<result property="animalType" column="animal_type"></result>
+			<result property="animalTypeSub" column="animal_type_sub"></result>
+		</association>
+		<association property="member" javaType="Member">
+			<result property="memberId" column="member_id"></result>
+			<result property="memberName" column="member_name"></result>
+			<result property="memberPhone" column="member_phone"></result>
+		</association>
+	</resultMap>
+	
+	<!-- 이름&연락처로 신고코드 찾기 -->
+	<select id="selectCenterReport" parameterType="String" resultMap="SearchReportAnimal">
+		SELECT 
+		*
+		FROM 
+			tb_search_report AS s
+			JOIN 
+			tb_animal_type AS t
+			ON 
+			s.animal_code = t.animal_type_code
+			JOIN 
+			tb_member AS m
+			ON
+			m.member_id=s.member_id
+		WHERE 
+			m.member_name = #{memberName}
+			AND 
+			m.member_phone = #{memberPhone}
+	</select>
+	
+	<!-- searchReportCode로 acceptCode 찾기 -->
+	<select id="searchReportManager" parameterType="String" resultType="String">
+		SELECT 
+			accept_code as acceptCode
+		FROM 
+			tb_report_manager	AS r
+		JOIN 
+			tb_search_report AS s
+		on
+			r.report_code = s.search_report_code
+		WHERE 
+			s.search_report_code = #{reCode}
+	</select>
+	
+	<!-- acceptCode로 searchReportCode 찾기 -->
+	<select id="getsearchReportCode" parameterType="String" resultType="String" >
+		SELECT 
+			s.search_report_code AS searchReportCode
+		FROM tb_animal_insert AS a 
+			JOIN tb_report_manager AS r ON a.accept_code = r.accept_code
+			JOIN tb_search_report AS s ON r.report_code = s.search_report_code
+		WHERE 
+			a.animal_insert_code = #{send_code}
+	</select>
+	
+	<select id="selectReportCodeAnimal" parameterType="String" resultMap="SearchReportAnimal">
+		SELECT
+		 *
+		FROM 
+		tb_animal_insert AS a
+		 	left JOIN tb_report_manager AS r ON a.accept_code = r.accept_code
+			JOIN tb_search_report AS s on r.report_code = s.search_report_code
+			JOIN tb_member AS m ON s.member_id = m.member_id
+		WHERE 
+			a.animal_insert_code = #{send_code};
+	</select>
+</mapper>

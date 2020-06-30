@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="@{layout/default2}">
+	
+<th:block layout:fragment="customTitle">
+</th:block> 
+
+<th:block layout:fragment="customContents">
+	<section class="content">
+		<div class="container-fluid">
+			<div class="block-header">
+                <h2>
+                    	펫사료등록화면
+                </h2>
+            </div>
+            
+            <div class="card">
+            	<div class="body">
+            		<form id="petFoodForm" action="/petItem/petFoodInsert" method="post">
+            			<div class="row">
+            				<div class="col-md-4">
+            					<div class="input-group">
+									<div class="form-line">
+										사료종류
+										<div>
+											<select id="foodType" name="foodType">
+												<option value="">-- 종류선택 --</option>
+												<option th:each="aniType : ${aniTypeCnt}" th:value="${aniType.animalType}">-- [[${aniType.animalType}]] --</option>
+											</select>
+										</div>
+									</div>
+								</div>
+            				</div>
+            				<div class="col-md-4">
+								<div class="input-group">
+			                        <div class="form-line">
+										사료단가
+			                            <input id="foodPrice" type="number" class="form-control" name="foodPrice" placeholder="가격">
+			                        </div>
+								</div>
+            				</div>
+            				<div class="col-md-4">
+								<div class="input-group">
+			                        <div class="form-line">
+										수량
+			                            <input id="foodAmount" type="number" class="form-control" name="foodAmount" placeholder="수량">
+			                        </div>
+								</div>
+            				</div>
+            			</div>
+						<div class="row">
+							<div class="col-md-4">
+								<div class="input-group">
+			                        <div class="form-line">
+										사료이름
+			                            <input id="foodName" type="text" class="form-control" name="foodName" placeholder="사료이름">
+			                        </div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="input-group">
+			                        <div class="form-line">
+										사료회사
+			                            <input id="foodCompany" type="text" class="form-control" name="foodCompany" placeholder="사료회사">
+			                        </div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="input-group">
+			                        <div class="form-line">
+										구매인
+			                            <input id="foodBuyer" type="text" class="form-control" name="foodBuyer" placeholder="구매인" th:value="${session.SID}">
+			                        </div>
+								</div>
+							</div>
+						</div>	            		
+						<button id="petFoodBtn" class="btn btn-block bg-amber waves-effect" type="button">유기동물보호등록</button>
+					</form>
+            	</div>
+            </div>	
+		</div>
+	</section>
+</th:block> 
+
+<th:block layout:fragment="customHeadScript">
+</th:block> 
+
+<th:block layout:fragment="customCss">
+	<link href="/plugins/multi-select/css/multi-select.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+</th:block>
+
+<th:block layout:fragment="customFooterScript">
+	<script>
+		$(function(){
+			var checkValue = function(obj, msg){
+				if(obj.val() == ''){
+					alert(msg);
+					obj.focus();
+					
+					return true;
+				}
+				return false;
+			}
+			
+			$('#petFoodBtn').click(function(){
+				if(checkValue($('#foodType'), 	'사료종료를 입력해주세요')) 	return;
+				if(checkValue($('#foodPrice'), 	'사료가격을 입력해주세요')) 	return;
+				if(checkValue($('#foodAmount'), '사료 구입량을 입력해주세요')) 	return;
+				if(checkValue($('#foodBuyer'), 	'구매인을 입력해주세요')) 		return;
+				if(checkValue($('#foodName'), 	'사료이름을 입력해주세요')) 	return;
+				if(checkValue($('#foodCompany'),'사료회사를 입력해주세요')) 	return;
+				
+				$('#petFoodForm').submit();
+			});
+		});
+	</script>
+</th:block>
+
+</html>

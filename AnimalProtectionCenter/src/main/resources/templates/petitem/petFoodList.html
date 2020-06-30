@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="@{layout/default2}">
+	
+<th:block layout:fragment="customTitle">
+	<title>사료 리스트</title>
+</th:block>
+
+<th:block layout:fragment="customContents">
+	<section class="content">
+		<div class="col-lg-12">
+			<div class="container-fluid">
+				<div class="card">
+					<div class="header">
+						<h2>
+							사료리스트
+						</h2>
+						<ul class="header-dropdown m-r--5">
+		                    <li class="dropdown">
+		                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+		                            <i class="material-icons">more_vert</i>
+		                        </a>
+		                        <ul class="dropdown-menu pull-right">
+		                            <li><a href="/petItem/petFoodInsert" class=" waves-effect waves-block">사료 등록</a></li>
+		                        </ul>
+		                    </li>
+		                </ul>
+					</div>
+					<div class="body">
+						<div class="row clearfix">
+		                	<div class="col-xs-3 col-md-3" >
+		                    	<a th:href="@{/petItem/petFoodList}">
+			                        <button class="btn btn-default btn-lg btn-block waves-effect" type="button">
+			                        	전체보기
+			                        	<span class="badge" th:text="${totalCount}"></span>
+			                        </button>
+		                    	</a>
+		                    </div>
+		                	<div class="col-xs-3 col-md-3" th:each="p : ${petFoodTypeCnt}" >
+		                    	<a th:href="@{/petItem/petFoodList(sendType=${p.foodType})}">
+			                        <button class="btn btn-default btn-lg btn-block waves-effect" type="button">
+			                        	[[${p.foodType}]]
+			                        	<span class="badge">[[${p.foodCount}]]</span>
+			                        </button>
+		                    	</a>
+		                    </div>
+		                </div>
+		                
+						<div class="table-responsive" style="overflow: hidden;">
+							<table id="dataTable" class="table table-bordered table-striped table-hover">
+							    <thead>
+							        <tr>
+							        	<th data-orderable="false"></th>
+							            <th><div class="align-center">사료종류</div></th>
+							            <th><div class="align-center">사료단가</div></th>
+							            <th><div class="align-center">수량</div></th>
+							            <th><div class="align-center">재고량</div></th>
+							            <th><div class="align-center">사용량</div></th>						            
+							            <th><div class="align-center">사료이름</div></th>
+							            <th><div class="align-center">사료회사</div></th>
+							            <th><div class="align-center">구매인</div></th>
+							            <th data-orderable="false"><div class="align-center">수정</div></th>
+							            <th data-orderable="false"><div class="align-center">삭제</div></th>
+							        </tr>
+							    </thead>
+							    <tbody>
+							        <tr th:each="pf, i : ${petFoodList}">
+							        	<td><div class="align-center">[[${i.count}]]</div></td>
+							            <td><div class="align-center">[[${pf.foodType}]]</div></td>
+							            <td><div class="align-center">[[${pf.foodPrice}]]</div></td>
+							            <td><div class="align-center">[[${pf.foodAmount}]]</div></td>
+							            <td><div class="align-center">[[${pf.foodRemain}]]</div></td>
+							            <td><div class="align-center">[[${pf.foodAmount - pf.foodRemain}]]</div></td>
+							            <td><div class="align-center">[[${pf.foodName}]]</div></td>
+							            <td><div class="align-center">[[${pf.foodCompany}]]</div></td>
+							            <td><div class="align-center">[[${pf.foodBuyer}]]</div></td>
+							            <td>
+							            	<div class="align-center">
+								            	<a th:href="@{/petItem/petFoodUpdate(foodCode=${pf.foodCode})}" style="color: #9E9E9E">
+								            		<i class="material-icons">update</i>
+								            	</a>
+								            </div>
+							            </td>
+							            <td>
+							           	 	<div class="align-center">
+							            		<a class="delete" data-toggle="modal" data-color="red" th:data-data="${pf.foodCode}" data-title="delete" href="#modalTarget">
+							            			<i class="material-icons">delete</i>
+							            		</a>
+							            	</div>
+							            </td>
+							        </tr>
+							    </tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	
+	<div id="modalTarget" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h2 class="modal-title">Modal Header</h2>
+				</div>
+				<div class="modal-body">
+					<p>Some text in the modal.</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="ok">ok</button>
+					<button type="button" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</th:block> 
+
+<th:block layout:fragment="customHeadScript">
+</th:block> 
+
+<th:block layout:fragment="customCss">
+	<!-- JQuery DataTable Css -->
+    <link href="/plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.min.css" rel="stylesheet">
+</th:block>
+
+<th:block layout:fragment="customFooterScript">
+	<!-- Jquery DataTable Plugin Js -->
+    <script src="/plugins/jquery-datatable/jquery.dataTables.js"></script>
+    <script src="/plugins/jquery-datatable/skin/bootstrap/js/dataTables.bootstrap.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/dataTables.buttons.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/buttons.flash.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/jszip.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/pdfmake.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/vfs_fonts.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/buttons.html5.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/buttons.print.min.js"></script>
+    <script>
+    	$(function(){
+    		$('#dataTable').dataTable({
+    			"aaSorting": []
+    		});
+    		/*
+    		$('.delete').click(function(){
+    			 if (confirm("정말 삭제하시겠습니까??") == true){    //확인
+    			     return true;
+    			 }else{   //취소
+    			     return false;
+    			 }
+    		});
+    		*/
+    		$('#modalTarget').on('show.bs.modal', function (event) {
+    	        var color = $(event.relatedTarget).data('color');
+    	        var data = $(event.relatedTarget).data('data');
+    	        var title = $(event.relatedTarget).data('title');
+    	        $('#modalTarget .modal-title').text(title);
+    	        $('#modalTarget .modal-body').text(data);
+    	        $('#modalTarget .modal-content').removeAttr('class').addClass('modal-content modal-col-' + color);
+    	        $('#ok').val(data);
+    	    });
+    		
+    		$('#ok').click(function(){
+    			var val = $(this).val();
+    			console.log('ok 버튼 클릭 했음' + val);
+    			location.href='/petItem/petFoodDelete?foodCode=' + val;
+    		});
+    	});
+    </script>
+</th:block>
+ 
+</html>

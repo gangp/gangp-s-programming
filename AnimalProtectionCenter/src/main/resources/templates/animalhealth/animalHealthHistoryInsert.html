@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="@{layout/default2}">
+<th:block layout:fragment="customCss">
+
+</th:block>
+
+<th:block layout:fragment="customTitle">
+	<title>동물 치료 등록</title>
+</th:block> 
+<th:block layout:fragment="customHeadScript">
+</th:block> 
+
+<th:block layout:fragment="customContents">
+	<section class="content">
+		<div class="col-lg-12">
+			<div class="card">
+				<div class="header">
+					<h2 th:if="${hinfo.animalHealthResult} == null">동물 치료 등록</h2>
+					<h2 th:unless="${hinfo.animalHealthResult} == null">동물 치료 수정</h2>
+				</div>
+				<form action="/animalhealth/animalhealthupdate" method="post">
+				<div class="body">
+					<div class="clearfix">
+							<div class="row">
+				      			<div class="col-md-3">
+				      				<b>동물번호</b>
+					                <div class="input-group colorpicker colorpicker-element">
+					                    <div class="form-line">
+					                    	<input type="hidden" name="animalHealthCode" th:value="${hinfo.animalHealthCode}">
+					                        <input th:if="${hinfo.animalHealthResult} == null" type="text" name="animalCenterNumber" class="form-control" th:value="${hinfo.animalCenter.animalCenterNumber}">
+					                        <input th:unless="${hinfo.animalHealthResult} == null" type="text" name="animalCenterNumber" class="form-control" th:value="${hinfo.animalCenter.animalCenterNumber}" readonly="readonly">
+					                    </div>
+					       			</div>
+				      			</div>
+				      			<div class="col-md-3 col-md-offset-1">
+				      				<b>담당자</b>
+					                <div class="input-group colorpicker colorpicker-element">
+					                    <div class="form-line">
+					                        <input type="hidden" name="staffCode" class="form-control" th:value="${hinfo.staff.staffCode}">
+					                        <input type="text" name="staffName" class="form-control" th:value="${hinfo.staff.staffName}" readonly="readonly">
+					                    </div>
+					       			</div>
+				      			</div>
+				      			<div class="col-md-3 col-md-offset-1">
+				      				<b>치료 일자</b>
+					                <div class="input-group colorpicker colorpicker-element">
+					                    <div class="form-line">
+					                        <input type="text" name="animalHealthEndDate" class="form-control"  readonly="readonly">
+					                    </div>
+					       			</div>
+				      			</div>
+							</div>
+			                <b>치료 내용</b>
+		           			<textarea class="form-control" rows="3" name="animalHealthResult"></textarea>
+			  	    	</div>
+				</div>
+	            <div class="body">
+	            	<button th:if="${hinfo.animalHealthResult} == null" type="submit" class="btn bg-amber btn-block btn-lg waves-effect">동물 치료 등록</button>
+	            	<button th:unless="${hinfo.animalHealthResult} == null" type="submit" class="btn bg-amber btn-block btn-lg waves-effect">동물 치료 수정</button>
+	            </div>
+	      		</form>
+			</div>
+		</div>
+	</section>
+</th:block> 
+
+<th:block layout:fragment="customFooterScript">
+	<script>
+		$('input[name=animalHealthEndDate]').val(new Date().toISOString().substring(0, 10));
+	</script>
+</th:block>
+ 
+</html>

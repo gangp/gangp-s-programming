@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafe24.memory.mapper.AnimalDisposalMapper">
+	<resultMap type="AnimalDisposal" id="animalDisposal">
+		<result property="animalDisposalCode" column="animal_disposal_code"></result>
+		<result property="animalDisposalResult" column="animal_disposal_result"></result>
+		<result property="animalDisposalDate" column="animal_disposal_date"></result>
+		<result property="animalDisposalDieInfo" column="animal_disposal_die_info"></result>
+		<result property="animalDisposalPastureInfo" column="animal_disposal_pasture_info"></result>
+		<association property="staff" javaType="Staff">
+			<result property="staffCode" column="staff_code"></result>
+			<result property="staffName" column="staff_name"></result>
+		</association>
+		<association property="animalCneter" javaType="AnimalCenter">
+			<result property="animalInsertCode" column="animal_insert_code"></result>
+			<result property="animalCenterNumber" column="animal_center_number"></result>
+		</association>
+		<association property="centerReturn" javaType="CenterReturn">
+			<result property="centerReturnCode" column="center_return_code"></result>
+			<result property="centerReturnDate" column="center_return_date"></result>
+			<result property="centerReturnName" column="center_return_name"></result>
+			<result property="centerReturnPhone" column="center_return_phone"></result>
+			<result property="centerReturnAddress" column="center_return_address"></result>
+		</association>
+		<association property="adoptee" javaType="Adoptee">
+			<result property="adopteeCode" column="adoptee_code"></result>
+			<result property="adopteeDate" column="adoptee_date"></result>
+			<association property="member" javaType="Member">
+				<result property="memberId" column="member_id"/>
+				<result property="memberName" column="member_name"/>
+				<result property="memberPhone" column="member_phone"/>
+				<result property="memberAddr" column="member_addr"/>
+			</association>
+		</association>
+	</resultMap>
+	
+	<select id="DisposalReturnCode" resultType="String">
+		SELECT
+			center_return_code
+		FROM 
+			tb_center_return
+		WHERE 
+			center_return_name = #{reName}
+			AND
+			center_return_phone = #{rePhone}
+	</select>
+	
+	<select id="DisposalmemberId" resultType="String">
+		SELECT 
+		adoptee_code
+		FROM
+		tb_adoptee
+		WHERE member_id=#{send_id}
+		ORDER BY COUNT(*)
+	</select>
+	
+	<insert id="insertAnimalDisposal" parameterType="AnimalDisposal">
+		<selectKey order="BEFORE" keyProperty="animalDisposalCode" resultType="String">
+			SELECT
+				(case COUNT(*)
+				when 0 then'disposal_1'
+				else CONCAT('disposal_',MAX(CAST(SUBSTRING(animal_disposal_code,10) AS DECIMAL))+1) 
+				END)AS animal_disposal_code
+			FROM
+				tb_animal_disposal
+		</selectKey>
+		INSERT INTO tb_animal_disposal
+		(animal_disposal_code
+		, animal_insert_code
+		, animal_disposal_result
+		, animal_disposal_pasture_info
+		, animal_disposal_die_info
+		, animal_disposal_date
+		, staff_code
+		, adoptee_code
+		, center_return_code)
+		VALUES (#{animalDisposalCode}
+				, #{animalCneter.animalInsertCode}
+				, #{animalDisposalResult}
+				, #{animalDisposalPastureInfo}
+				, #{animalDisposalDieInfo}
+				, NOW()
+				, #{staff.staffCode}
+				, #{adoptee.adopteeCode}
+				, #{centerReturn.centerReturnCode})
+	</insert>
+	
+	<select id="selectDisposal" parameterType="String" resultMap="animalDisposal">
+		SELECT
+		*
+		FROM 
+			tb_animal_disposal AS d
+			LEFT JOIN tb_animal_insert AS i ON d.animal_insert_code = i.animal_insert_code
+			LEFT JOIN tb_staff AS s ON d.staff_code = s.staff_code
+			LEFT JOIN tb_adoptee AS a ON d.adoptee_code = a.adoptee_code
+			LEFT JOIN tb_center_return AS c ON d.center_return_code = c.center_return_code
+			LEFT JOIN tb_member AS m ON a.member_id = m.member_id
+		<if test="send_code != null and send_code !=''.toString()">
+			<where>d.animal_insert_code = #{send_code}</where>
+		</if>
+		ORDER BY d.animal_disposal_date DESC
+	</select>
+</mapper>

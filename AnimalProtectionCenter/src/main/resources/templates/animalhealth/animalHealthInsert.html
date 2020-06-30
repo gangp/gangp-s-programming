@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="@{layout/default2}">
+<th:block layout:fragment="customCss">
+	<!-- Bootstrap Select Css -->
+    <link href="/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
+</th:block>
+
+<th:block layout:fragment="customTitle">
+	<title>동물 진료 기록 등록</title>
+</th:block> 
+<th:block layout:fragment="customHeadScript">
+</th:block> 
+
+<th:block layout:fragment="customContents">
+	<section class="content">
+		<div class="col-lg-12">
+			<div class="card">
+				<div class="header">
+					<h2>동물 진료 기록 등록</h2>
+				</div>
+				<form action="/animalhealth/animalhealthinsert" method="post">
+				<div class="body">
+					<div class="clearfix">
+							<div class="row">
+				      			<div class="col-md-3">
+				      				<b>동물번호</b>
+				      				<div class="input-group">
+						           		<select class="form-control" name="animalInsertCode">
+						           			<option value="">------ 동물 번호 선택 ------</option>
+						           			<option th:each="AList : ${AList}" th:value="${AList.animalInsertCode}">[[${AList.animalCenterNumber}]]</option>
+						           		</select>
+					           		</div>
+				      			</div>
+				      			<div class="col-md-3 col-md-offset-1">
+				      				<b>담당자</b>
+					                <div class="input-group colorpicker colorpicker-element">
+					                    <div class="form-line">
+					                    	<!-- 세션 등록 -->
+					                        <input type="hidden" name="staffCode" class="form-control" th:value="${session.STAFF.staffCode}">
+					                        <input type="text" name="staffName" class="form-control" th:value="${session.STAFF.staffName}" readonly="readonly">
+					                    </div>
+					       			</div>
+				      			</div>
+				      			<div class="col-md-3 col-md-offset-1">
+				      				<b>등록 일자</b>
+					                <div class="input-group colorpicker colorpicker-element">
+					                    <div class="form-line">
+					                        <input type="text" name="animalHealthRegDate" class="form-control" readonly="readonly">
+					                    </div>
+					       			</div>
+				      			</div>
+							</div>
+			                <b>동물 상태</b>
+		           			<textarea class="form-control" rows="3" name="animalHealthContents"></textarea>
+			  	    	</div>
+				</div>
+	            <div class="body">
+	            	<button type="submit" class="btn bg-amber btn-block btn-lg waves-effect">동물 상태 등록</button>
+	            </div>
+	      		</form>
+			</div>
+		</div>
+	</section>
+</th:block> 
+
+<th:block layout:fragment="customFooterScript">
+	<script>
+		$('input[name=animalHealthRegDate]').val(new Date().toISOString().substring(0, 10));
+	</script>
+</th:block>
+ 
+</html>

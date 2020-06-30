@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="@{layout/default2}">
+	
+<th:block layout:fragment="customTitle">
+	<title>심사지표</title>
+</th:block> 
+<th:block layout:fragment="customCss">
+	<!-- JQuery DataTable Css -->
+    <link href="/plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
+</th:block> 
+
+<th:block layout:fragment="customContents">
+	<section class="content">
+		<div class="col-lg-12">
+			<div class="card">
+				<div class="header">
+	                <h2>심사지표</h2>
+				</div>
+				<div class="body">
+	                <div class="table-responsive" style="overflow: hidden;">
+	                    <table id="dataTabelEaxm1" class="table table-bordered table-striped table-hover">
+						    <thead>
+						        <tr>
+						            <th>문항명</th>
+						            <th>보기내용</th>
+						            <th>점수분배</th>
+						            <th>수정</th>
+						        </tr>
+						    </thead>
+						    <tbody>
+						        <tr th:each="i : ${selectQuestionExample}">
+						            <td>[[${i.question_name}]]</td>
+						            <td>[[${i.question_example_content}]]</td>
+						            <td>[[${i.score_division}]]</td>
+						            <td>
+						            	<div class="align-center">
+		                                <a href="#" style="color: #9E9E9E">
+		                       			<i class="material-icons">update</i></a></div>
+		                      		</td>
+						        </tr>
+						    </tbody>
+	                    </table>
+	                </div>
+	            </div>
+			</div>
+		</div>
+	</section>
+</th:block> 
+
+<th:block layout:fragment="customHeadScript">
+</th:block> 
+
+<th:block layout:fragment="customCss">
+</th:block>
+
+<th:block layout:fragment="customFooterScript">
+    <!-- Jquery DataTable Plugin Js -->
+    <script src="/plugins/jquery-datatable/jquery.dataTables.js"></script>
+    <script src="/plugins/jquery-datatable/skin/bootstrap/js/dataTables.bootstrap.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/dataTables.buttons.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/buttons.flash.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/jszip.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/pdfmake.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/vfs_fonts.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/buttons.html5.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/buttons.print.min.js"></script>
+    <script>
+    	$(function(){
+    		$('#dataTabelEaxm1').dataTable({
+    			"aaSorting": []
+    		});
+    	});
+    </script>
+</th:block>
+ 
+</html>

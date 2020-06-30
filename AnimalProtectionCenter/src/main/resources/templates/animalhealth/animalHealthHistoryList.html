@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="@{layout/default2}">
+<th:block layout:fragment="customCss">
+	<!-- JQuery DataTable Css -->
+    <link href="/plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
+    <style>
+    	::-webkit-scrollbar { display: none; }
+    </style>
+</th:block>
+
+<th:block layout:fragment="customTitle">
+	<title>동물 진료 기록 내역</title>
+</th:block> 
+<th:block layout:fragment="customHeadScript">
+</th:block> 
+
+<th:block layout:fragment="customContents">
+	<section class="content">
+		<div class="col-lg-12">
+			<div class="card">
+				<div class="header">
+	                <h2>치료 완료 동물 리스트</h2>
+				</div>
+				<div class="body">
+	                <div class="table-responsive" style="overflow: hidden;">
+	                    <table id="dataTabelEaxm2" class="table table-bordered table-striped table-hover">
+	                        <thead>
+	                            <tr>
+		                            <th data-orderable="false"></th>
+		                            <th><div class="align-center">동물 번호</div></th>
+		                            <th><div class="align-center">아픈 내용</div></th>
+		                            <th><div class="align-center">아픈 날짜</div></th>
+		                            <th><div class="align-center">치료 내용</div></th>
+		                            <th><div class="align-center">치료 완료 날짜</div></th>
+		                            <th><div class="align-center">담당자</div></th>
+		                            <th data-orderable="false"><div class="align-center">수정</div></th>
+		                            <th data-orderable="false"><div class="align-center">삭제</div></th>
+		                        </tr>
+	                        </thead>
+	                        <tbody>
+	                            <tr th:each="hlist , i : ${hlist}" class="odd">
+	                            	<td><div class="align-center">[[${i.size - i.index}]]</div></td>
+	                            	<td><div class="align-center">[[${hlist.animalCenter.animalCenterNumber}]]
+	                            		<a th:href="@{/animalcenter/animalcenterpage(send_code=${hlist.animalCenter.animalInsertCode})}">(동물정보 상세보기)</a></div></td>
+		                            <td><div class="align-center">[[${hlist.animalHealthContents}]]</div></td>
+		                            <td><div class="align-center">[[${hlist.animalHealthRegDate}]]</div></td>
+		                            <td><div class="align-center">[[${hlist.animalHealthResult}]]</div></td>
+		                            <td><div class="align-center">[[${hlist.animalHealthEndDate}]]</div></td>
+		                            <td><div class="align-center">[[${hlist.staff.staffName}]]</div></td>
+		                            <td>
+		                            	<div class="align-center">
+		                            		<a th:href="@{/animalhealth/animalhealthhistoryinsert(send_code=${hlist.animalHealthCode})}" style="color: #9E9E9E;">
+	                       						<i class="material-icons">update</i>
+	                       					</a>
+	                       				</div>
+	                      			</td>
+	                      			<td>
+			                       		<div class="align-center">
+			                       			<a class="delete" data-toggle="modal" data-color="red" th:data-data="${hlist.animalHealthCode}" data-title="해당 기록을 삭제하시겠습니까?" href="#modalTarget">
+						            			<i class="material-icons">delete</i>
+						            		</a>
+				                       	</div>
+			                       	</td>
+	                        	</tr>
+	                        </tbody>
+	                    </table>
+	                </div>
+	            </div>
+			</div>
+		</div>
+	</section>
+	<div id="modalTarget" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h2 class="modal-title">Modal Header</h2>
+				</div>
+				<div class="modal-body">
+					<p>Some text in the modal.</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="yes">네</button>
+					<button type="button" id="no">아니오</button>
+					<button type="button" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</th:block> 
+
+<th:block layout:fragment="customFooterScript">
+	<!-- Jquery DataTable Plugin Js -->
+    <script src="/plugins/jquery-datatable/jquery.dataTables.js"></script>
+    <script src="/plugins/jquery-datatable/skin/bootstrap/js/dataTables.bootstrap.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/dataTables.buttons.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/buttons.flash.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/jszip.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/pdfmake.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/vfs_fonts.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/buttons.html5.min.js"></script>
+    <script src="/plugins/jquery-datatable/extensions/export/buttons.print.min.js"></script>
+    <script>
+    	$(function(){
+    		$('#dataTabelEaxm2').dataTable({
+    			"aaSorting": []
+    		});
+    		
+			$('#modalTarget').on('show.bs.modal', function (event) {
+    	        var color = $(event.relatedTarget).data('color');
+    	        var data = $(event.relatedTarget).data('data');
+    	        var title = $(event.relatedTarget).data('title');
+    	        $('#modalTarget .modal-title').text(title);
+    	        $('#modalTarget .modal-body').text('해당 기록을 영구히 삭제하시려면 (네), 치료만 삭제하시려면 (아니오) 버튼을 클릭하세요.');
+    	        $('#modalTarget .modal-content').removeAttr('class').addClass('modal-content modal-col-' + color);
+    	        $('#no').val(data);
+    	        $('#yes').val(data);
+    	    });
+    		
+    		$('#no').click(function(){
+    			var val = $(this).val();
+    			console.log('no 버튼 클릭 했음-치료삭제' + val);
+    			location.href='/animalhealth/animalhealthhistorydelete?send_code=' + val;
+    		});
+    		$('#yes').click(function(){
+    			var val = $(this).val();
+    			console.log('yes 버튼 클릭 했음-진료삭제' + val);
+    			location.href='/animalhealth/animalhealthdelete?send_code=' + val;
+    		});
+    	});
+    </script>
+</th:block>
+</html>

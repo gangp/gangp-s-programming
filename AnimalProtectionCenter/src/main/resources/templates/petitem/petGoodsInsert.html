@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="@{layout/default2}">
+	
+<th:block layout:fragment="customTitle">
+</th:block> 
+
+<th:block layout:fragment="customContents">
+	<section class="content">
+		<div class="container-fluid">
+            <div class="card">
+            	<div class="header">
+            		<h2>
+            			펫용품등록
+            		</h2>
+            	</div>
+            	<div class="body">
+            		<form id="petItemForm" action="/petItem/petGoodsInsert" method="post">
+            			<div class="row">
+            				<div class="col-md-4">
+			            		<div class="input-group">
+			                        <div>
+										용품
+			                            <div>
+				                            <select id="item" name="implementCode">
+				                            	<option value=""> -- 용품 선택 -- </option>
+				                            	<option th:each="im : ${implementList}" th:value="${im.implementCode}" th:text="${im.implementType}"></option>
+				                            </select>
+			                            </div>
+			                        </div>
+								</div>
+            				</div>
+            				<div class="col-md-4">
+								<div class="input-group">
+			                        <div class="form-line">
+										유기동물번호
+			                            <div>
+				                            <select id="animalNum" name="animalInsertCode">
+				                            	<option value=""> -- 동물번호 선택 -- </option>
+				                            	<option th:each="ac : ${animalCenterList}" th:value="${ac.animalInsertCode}" th:text="${ac.animalCenterNumber}"></option>
+				                            </select>
+			                            </div>
+			                        </div>
+								</div>
+            				</div>
+            				<div class="col-md-4">
+								<div class="input-group">
+			                        <div class="form-line">
+										담당자
+			                            <input type="text" class="form-control" th:value="${session.STAFF.staffName}">
+			                            <input type="hidden" id="staffCode" class="form-control" name="staffCode" th:value="${session.STAFF.staffCode}">
+			                        </div>
+								</div>
+            				</div>
+            			</div>						
+						<button id="petItemBtn" class="btn btn-block bg-amber waves-effect" type="button">펫용품등록</button>
+					</form>
+            	</div>
+            </div>	
+		</div>
+	</section>
+</th:block> 
+
+<th:block layout:fragment="customHeadScript">
+</th:block> 
+
+<th:block layout:fragment="customCss">
+	<link href="../../plugins/multi-select/css/multi-select.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+</th:block>
+
+<th:block layout:fragment="customFooterScript">
+	<script>
+		$(function(){
+			var checkValue = function(obj, msg){
+				if(obj.val() == ''){
+					alert(msg);
+					obj.focus();
+					
+					return true;
+				}
+				return false;
+			}
+			
+			$('#petItemBtn').click(function(){
+				if(checkValue($('#item'), 	'용품을 선택해주세요')) 	return;
+				if(checkValue($('#animalNum'), 	'동물번호를 선택해주세요')) 	return;
+				if(checkValue($('#staffCode'), '담당자를 입력해주세요')) 	return;
+				
+				$('#petItemForm').submit();
+			});
+		});
+	</script>
+</th:block>
+ 
+</html>

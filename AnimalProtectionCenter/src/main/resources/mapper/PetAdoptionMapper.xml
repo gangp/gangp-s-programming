@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cafe24.memory.mapper.PetAdoptionMapper">
+	
+	<resultMap type="PetAdoption" id="petAdoption">
+		<result property="petAdoptionCode" column="pet_adoption_code"></result>
+		<result property="petAdoptionInDate" column="pet_adoption_in_date"></result>
+		<result property="petAdoptionManagementDate" column="pet_adoption_management_date"></result>
+		<result property="petAdoptionEndDate" column="pet_adoption_end_date"></result>
+		<result property="petAdoptionState" column="pet_adoption_state"></result>
+		
+		<association property="staff" javaType="Staff">
+			<result property="staffName" column="staff_name"></result>
+			<result property="staffCode" column="staff_code"></result>
+		</association>
+		
+		<association property="member" javaType="Member">
+			<result property="memberId" column="member_id"></result>
+			<result property="memberName" column="member_name"></result>
+		</association>
+		
+	</resultMap>	
+	
+	<!-- 리스트 -->
+	<select id="seletectPetAdoption" 
+	resultMap="petAdoption">
+		SELECT 
+			pet_adoption_code, 
+			m.member_id, 
+			m.member_name, 
+			t.staff_name,
+			pet_adoption_in_date, 
+			pet_adoption_state, 
+			pet_adoption_management_date, 
+			pet_adoption_end_date
+		FROM 
+			tb_pet_Adoption AS a
+		INNER JOIN 
+			tb_member AS m
+		INNER JOIN 
+			tb_staff AS t
+		ON
+		a.member_id=m.member_id
+		AND
+		a.staff_code=t.staff_code;
+	</select>
+	
+	<!-- 코드로 찾기 -->
+	<select id="selectPetAdoption" parameterType="String" resultMap="petAdoption">
+		SELECT 
+			pet_adoption_code, 
+			m.member_id,
+			m.member_name, 
+			staff_code, 
+			pet_adoption_in_date, 
+			pet_adoption_state, 
+			pet_adoption_management_date, 
+			pet_adoption_end_date
+		FROM 
+			tb_pet_Adoption AS a
+		INNER JOIN
+			tb_member AS m
+		WHERE
+			pet_adoption_code=#{petAdoptionCode};
+	
+	</select>
+	
+	<!-- 등록 -->
+	<insert	id="insertPetAdoption" parameterType="PetAdoption">
+ 		
+ 		<selectKey resultType="String" order="BEFORE" keyProperty="petAdoptionCode">
+ 			SELECT 
+ 				CONCAT('PAC_', MAX(CAST(SUBSTRING(pet_adoption_code,5) AS DECIMAL)+1)) AS pet_adoption_code
+			FROM tb_pet_Adoption;
+ 		</selectKey>
+ 			INSERT INTO tb_pet_Adoption
+			(pet_adoption_code, member_id, staff_code, pet_adoption_in_date, pet_adoption_state, pet_adoption_management_date, pet_adoption_end_date)
+			VALUES (
+					#{petAdoptionCode}, 
+					#{member.memberId}, 
+					#{staff.staffCode}, 
+					NOW(), 
+					#{petAdoptionState}, 
+					#{petAdoptionManagementDate}, 
+					#{petAdoptionEndDate}
+					);
+	</insert>
+	
+	<!-- 수정 -->
+	
+	<update id="updatePetAdoption" parameterType="PetAdoption">
+		
+			UPDATE tb_pet_Adoption
+			SET
+				pet_adoption_state=#{petAdoptionState},
+				pet_adoption_management_date=#{petAdoptionManagementDate},
+				pet_adoption_end_date=#{petAdoptionEndDate}
+			WHERE 
+				pet_adoption_code=#{petAdoptionCode};
+	
+	</update>
+	<!-- 삭제 -->
+	<delete id="deletePetAdoption" parameterType="String">
+		DELETE 
+		FROM 
+			tb_pet_Adoption 
+		WHERE 
+			pet_adoption_code=#{petAdoptionCode};
+	</delete>
+	
+</mapper>
